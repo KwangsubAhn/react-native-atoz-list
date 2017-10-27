@@ -296,6 +296,28 @@ export default class FixedHeightWindowedListView extends Component {
    * the viewport.
    */
   __computeRowsToRenderSync(props, forceUpdate = false) {
+    
+    if (forceUpdate) {
+      this.scrollOffsetY = 0;
+      this.height = 0;
+      this.willComputeRowsToRender = false;
+      this.timeoutHandle = 0;
+      this.nextSectionToScrollTo = null;
+      this.scrollDirection = 'down';
+
+      let { dataSource, initialNumToRender } = this.props;
+
+      this.setState({
+        firstRow: 0,
+        lastRow: Math.min(this.props.dataSource.getRowCount() - 1, initialNumToRender),
+        bufferFirstRow: null,
+        bufferLastRow: null,
+      });
+
+      this.scrollRef.scrollTo({ y: 0, animated: false });
+
+    }
+    
     if (this.props.bufferFirstRow === 0 || this.props.bufferFirstRow > 0 || this.isScrollingToSection) {
       requestAnimationFrame(() => {
         this.__computeRowsToRenderSync(this.props);
